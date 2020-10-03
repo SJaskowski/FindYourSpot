@@ -4,7 +4,7 @@ from rest_framework import status, request
 from rest_framework.test import APIClient, APITestCase, force_authenticate
 import mock
 from django.core.files import File
-from .models import Custom_User, Apartment, Room, Images
+from .models import Custom_User, Apartment, Room, Images, Opinion
 
 
 # Create your tests here.
@@ -30,6 +30,11 @@ class AccountTests(APITestCase):
         test_new_apartment = Apartment.objects.get(name=name)
 
     try:
+        test_new_opinion = Opinion.objects.create(apartment=test_new_apartment, description='test_opinion_dsc', stats=5, poster = Custom_User.objects.get(username=user))
+    except IntegrityError:
+        test_new_opinion = Opinion.objects.get(apartment=test_new_apartment)
+
+    try:
         for room in rooms:
             test_single_room = Room.objects.create(name=room['name'], apartment=test_new_apartment,
                                               description=room['description'],
@@ -41,6 +46,7 @@ class AccountTests(APITestCase):
         test_single_room = Room.objects.get(name='test_room_name')
 
     def setUp(self) -> None:
+        self.test_new_opinion.save()
         self.user.save()
         self.test_single_room.save()
         self.test_new_apartment.save()
@@ -91,4 +97,27 @@ class AccountTests(APITestCase):
         response = self.client.patch('/room/', data={'room_id': self.test_single_room.id, 'patch_data': patch_data}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_put_opinion(self):
+        response = self.client.put('/opinion/', {'id': self.test_new_apartment.id,'type': 'apartment', 'description': 'new_opinion_description','stats': 5}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_get_opinion(self):
+        response = self.client.get('/opinion/', data={'id': self.test_new_opinion.id}, content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_delete_opinion(self):
+
+        response = self.client.delete('/opinion/',data={'id':  self.test_new_opinion.id}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.delete('/opinion/', data={'id': 123567890}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    def test_patch_opinion(self):
+        patch_data = {'description': "new_test_decription"}
+        response = self.client.patch('/opinion/', data={'id':  self.test_new_opinion.id, 'patch_data': patch_data}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 

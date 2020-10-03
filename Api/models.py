@@ -64,9 +64,10 @@ class Address(models.Model):
 
 
 class Opinion(models.Model):
-	room = models.ForeignKey(Room, default=None, on_delete=models.CASCADE)
+	room = models.ForeignKey(Room, default=None, on_delete=models.CASCADE, blank=True, null=True)
 	apartment = models.ForeignKey(Apartment, default=None, on_delete=models.CASCADE, blank=True, null=True)
 	description = models.TextField(max_length=1000, blank=True)
+	stats = models.FloatField(max_length=2, blank=True, null=True)
 	poster = models.ForeignKey(Custom_User, default=None, on_delete=models.CASCADE)
 
 

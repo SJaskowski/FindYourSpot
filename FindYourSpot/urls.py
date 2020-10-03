@@ -15,12 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Api.views import UserApartment,UserRoom
+from Api.views import UserApartment, UserRoom, UserOpinion
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('apartment/', UserApartment.as_view()),
-    path('room/', UserRoom.as_view())
+    path('room/', UserRoom.as_view()),
+    path('opinion/', UserOpinion.as_view())
 ]
