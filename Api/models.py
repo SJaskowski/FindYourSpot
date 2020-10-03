@@ -7,6 +7,7 @@ from django.db import models
 from  django.utils.timezone import timezone
 
 
+
 # Create your models here.
 from django.utils.text import slugify
 from pip._internal.utils.misc import enum
@@ -72,6 +73,6 @@ class Opinion(models.Model):
 class Advert(models.Model):
 	room = models.ForeignKey(Room, default=None, on_delete=models.CASCADE, blank=True, null=True)
 	apartment = models.ForeignKey(Apartment, default=None, on_delete=models.CASCADE, blank=True, null=True)
-	posting_date = models.DateField(default=django.utils.timezone.now())
+	posting_date = models.DateField(default=datetime.now)
 	active = models.BooleanField(default=True)
 	ended_on = models.DateField(blank=True, null=True)
