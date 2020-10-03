@@ -31,6 +31,7 @@ class Apartment(models.Model):
 	price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 	owner = models.ForeignKey(Custom_User, default=None, on_delete=models.CASCADE, blank=True, null=True)
 	rented = models.BooleanField(default=False, null=True, blank=True)
+	rent_as_whole = models.BooleanField(blank=True, null=True, default=False)
 
 
 class Room(models.Model):
@@ -43,7 +44,7 @@ class Room(models.Model):
 
 
 class Images(models.Model):
-	room = models.ForeignKey(Room, default=None, on_delete=models.CASCADE)
+	room = models.ForeignKey(Room, default=None, on_delete=models.CASCADE, null=True, blank=True)
 	apartment = models.ForeignKey(Apartment, default=None, on_delete=models.CASCADE, blank=True, null=True)
 	image = models.ImageField(upload_to=get_image_filename,
 	                          verbose_name='Image')
@@ -71,4 +72,3 @@ class Advert(models.Model):
 	posting_date = models.DateField(default=datetime.now())
 	active = models.BooleanField(default=True)
 	ended_on = models.DateField(blank=True, null=True)
-	pass
