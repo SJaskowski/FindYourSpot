@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from CRUD_API.views import UserApartment, UserRoom, UserOpinion
+from CRUD_API.views import UserApartment, UserRoom, UserOpinion, PostedAdvert
 
 
 urlpatterns = [
@@ -23,5 +23,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('apartment/', UserApartment.as_view()),
     path('room/', UserRoom.as_view()),
-    path('opinion/', UserOpinion.as_view())
+    path('opinion/', UserOpinion.as_view()),
+    path('advert/',PostedAdvert.as_view())
 ]
