@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Single_object_api.views import UserApartment, UserRoom, UserOpinion
+from CRUD_API.views import UserApartment, UserRoom, UserOpinion
 
 
 urlpatterns = [
