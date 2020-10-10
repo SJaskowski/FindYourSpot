@@ -45,9 +45,11 @@ class UserApartment(APIView):
 		try:
 			rooms_in_apartment = list(Room.objects.filter(apartment=Apartment.objects.get(id=apartment_id)).values())
 			apartment = list(Apartment.objects.filter(id=apartment_id).values())[0]
-		except ObjectDoesNotExist:
+			address = list(Address.objects.filter(apartment=Apartment.objects.get(id=apartment_id)).values())
+			print(address)
+		except ObjectDoesNotExist or IndexError:
 			return Response(status=status.HTTP_404_NOT_FOUND)
-		return Response({'apartment': apartment, 'rooms': rooms_in_apartment})
+		return Response({'apartment': apartment, 'rooms': rooms_in_apartment, 'address': address})
 
 
 	def delete(self, request):

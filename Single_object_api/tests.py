@@ -4,7 +4,7 @@ from rest_framework import status, request
 from rest_framework.test import APIClient, APITestCase, force_authenticate
 import mock
 from django.core.files import File
-from .models import Custom_User, Apartment, Room, Images, Opinion
+from .models import Custom_User, Apartment, Room, Images, Opinion, Address
 
 
 # Create your tests here.
@@ -25,7 +25,7 @@ class AccountTests(APITestCase):
     except IntegrityError:
         user = Custom_User.objects.get(username='testuser')
     try:
-        test_new_apartment = Apartment.objects.create(name=name, description=description, price=1120, owner = Custom_User.objects.get(username=user), rent_as_whole=False, address=address)
+        test_new_apartment = Apartment.objects.create(name=name, description=description, price=1120, owner = Custom_User.objects.get(username=user), rent_as_whole=False)
     except IntegrityError:
         test_new_apartment = Apartment.objects.get(name=name)
 
@@ -33,6 +33,14 @@ class AccountTests(APITestCase):
         test_new_opinion = Opinion.objects.create(apartment=test_new_apartment, description='test_opinion_dsc', stats=5, poster = Custom_User.objects.get(username=user))
     except IntegrityError:
         test_new_opinion = Opinion.objects.get(apartment=test_new_apartment)
+
+    try:
+        test_new_ad = Address.objects.create(street_name=address['street_name'], house_nr=address['house_nr'],
+		                                     country=address['country'], postal_code=address['postal_code'],
+		                                     city=address['city'], apartment=test_new_apartment)
+    except IntegrityError:
+        test_new_ad = Address.objects.get(apartment=test_new_apartment)
+
 
     try:
         for room in rooms:
@@ -50,6 +58,7 @@ class AccountTests(APITestCase):
         self.user.save()
         self.test_single_room.save()
         self.test_new_apartment.save()
+        self.test_new_ad.save()
         self.client.force_authenticate(user=self.user)
 
     def test_create_aparment(self):
@@ -59,7 +68,7 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_apartment(self):
-        response = self.client.get('/apartment/', data={'apartment_id': self.test_new_apartment.id}, content_type='application/json')
+        response = self.client.get('/apartment/', {'apartment_id': self.test_new_apartment.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_apartment(self):
@@ -81,7 +90,7 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_room(self):
-        response = self.client.get('/room/', data={'room_id': self.test_single_room.id}, content_type='application/json')
+        response = self.client.get('/room/', {'room_id': self.test_single_room.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_room(self):
@@ -103,11 +112,10 @@ class AccountTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_opinion(self):
-        response = self.client.get('/opinion/', data={'id': self.test_new_opinion.id}, content_type='application/json')
+        response = self.client.get('/opinion/', {'id': self.test_new_opinion.id})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_opinion(self):
-
         response = self.client.delete('/opinion/',data={'id':  self.test_new_opinion.id}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.delete('/opinion/', data={'id': 123567890}, format='json')
@@ -117,7 +125,6 @@ class AccountTests(APITestCase):
     def test_patch_opinion(self):
         patch_data = {'description': "new_test_decription"}
         response = self.client.patch('/opinion/', data={'id':  self.test_new_opinion.id, 'patch_data': patch_data}, format='json')
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

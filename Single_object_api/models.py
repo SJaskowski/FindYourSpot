@@ -13,11 +13,6 @@ from django.utils.text import slugify
 from pip._internal.utils.misc import enum
 
 
-class Role(Enum):
-	customer = 1
-	owner = 2
-	admin = 3
-
 
 class Custom_User(AbstractUser):
 	role = models.CharField(max_length=10, blank=True)
